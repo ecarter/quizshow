@@ -7,6 +7,10 @@
     "type": "git",
     "url": "https://github.com/ecarter/quizshow.git"
   },
+  "dependencies": {
+    "express": "*",
+    "socket.io": "*"
+  },
   "keywords": [
     "quiz",
     "websockets",
