@@ -1,11 +1,12 @@
 # quizshow
 
-collaborative realtime quiz
+a collaborative realtime quiz show
 
 # Requires
 
 * [Node.js](http://nodejs.org)
 * [npm](http://npmjs.org)
+* [mongodb](http://mongodb.org)
 
 # Install
 
@@ -18,6 +19,7 @@ collaborative realtime quiz
 Start the show!
 
     $ npm start
+    $ open http://localhost:3000
 
 # License
 
