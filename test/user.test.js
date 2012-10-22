@@ -8,11 +8,9 @@ var mongoose = require('mongoose')
   , Person = db.model('Person')
   , test_user = require('./fixtures').user;
 
-beforeEach(function(done){
-  Person.find().remove(function(err){
-    if (err) return done(err);
-    done();
-  });
+before(function(done){
+  Person.collection.drop();
+  done();
 });
 
 describe('Person', function(){
