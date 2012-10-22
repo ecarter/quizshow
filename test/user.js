@@ -5,14 +5,8 @@
 var mongoose = require('mongoose')
   , db = mongoose.createConnection('localhost', 'quizshow-test')
   , models = require('../models')
-  , Person = db.model('Person');
-
-var test_user = {
-  name: 'Test User'
-, secret: 'abcd1234'
-, about: 'I am a test user!'
-, image: '/images/avatar-default.png'
-};
+  , Person = db.model('Person')
+  , test_user = require('./fixtures').user;
 
 beforeEach(function(done){
   Person.find().remove(function(err){
