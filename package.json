@@ -7,13 +7,18 @@
     "url": "https://github.com/ecarter/quizshow.git"
   },
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "test": "mocha"
   },
   "dependencies": {
     "express": "*",
     "jade": "*",
     "socket.io": "*",
     "mongoose": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
   },
   "keywords": [
     "quiz",
