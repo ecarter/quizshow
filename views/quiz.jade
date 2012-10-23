@@ -2,14 +2,13 @@ extends layout
 
 block content
 
-  .details
-    h1= quiz.title
-    .body= quiz.body
+  h1= quiz.name
+  .body= quiz.body
 
-  .questions
-    h2 Current Question
-    .title Question Title
-    ul.answers
+  h2 Questions <i>(#{ quiz.questions.length })</i>
+  ol.questions
+    each q in quiz.questions
+      li= '' + q.question
 
   .people
     h2 People
