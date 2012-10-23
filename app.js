@@ -4,17 +4,18 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
   , http = require('http')
   , path = require('path')
   , sio = require('socket.io')
   , mongoose = require('mongoose')
-  , db = mongoose.createConnection('localhost', 'quizshow')
+  , config = require('./config')
+  , db = exports.db = mongoose.createConnection(config.MONGO_HOST, config.MONGO_DB)
   , models = require('./models')
+  , routes = require('./routes')
   , user = require('./routes/user')
   , quiz = require('./routes/quiz');
 
-var app = express();
+var app = exports.app = express();
 
 /**
  * Config
@@ -42,7 +43,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/quiz/:id', quiz.detail);
+app.get('/quiz/:id', quiz.index);
 
 /**
  * Server
