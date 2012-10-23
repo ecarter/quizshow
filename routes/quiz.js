@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var db = require('mongoose');
+var db = require('../app').db;
 
 
 /*
@@ -11,7 +11,10 @@ var db = require('mongoose');
  */
 
 exports.index = function(req, res){
-  db.model('Quiz').find(req.params.id, function(err, quiz){
+  console.log('req.params.id',req.params.id);
+  db.model('Quiz').findById(req.params.id, function(err, quiz){
+    console.log('quiz',quiz);
+    if (err) throw err;
     res.render('quiz', { title: quiz.name, quiz: quiz });
   });
 };
