@@ -30,6 +30,24 @@ var PersonSchema = new Schema({
 db.model('Person', PersonSchema);
 
 /**
+ * Question Schema
+ *
+ *    question - topic question
+ *    answer - answer to topic question
+ *    choices - possible question answers
+ *    value - question weight
+ */
+
+var QuestionSchema = new Schema({
+  question: String
+, answer: String
+, choices: [ { text: String, order: Number } ]
+, value: Number
+});
+
+db.model('Question', QuestionSchema);
+
+/**
  * Quiz Schema
  *
  *    name - quiz title
@@ -43,7 +61,7 @@ var QuizSchema = new Schema({
   name: String
 , body: String
 , status: { type: String, default: 'inactive' }
-, questions: [ { question: ObjectId, order: Number } ]
+, questions: [ QuestionSchema ]
 , owner: ObjectId
 , format: String
 });
@@ -51,46 +69,18 @@ var QuizSchema = new Schema({
 db.model('Quiz', QuizSchema);
 
 /**
- * Question Schema
- *
- *    question - topic question
- *    answers - possible question answers
- */
-
-var QuestionSchema = new Schema({
-  question: String
-, answers: [ { answer: ObjectId, order: Number } ]
-});
-
-db.model('Question', QuestionSchema);
-
-/**
  * Answer Schema
- *
- *    answer - possible answer to question
- *    value - points
- */
-
-var AnswerSchema = new Schema({
-  answer: ObjectId
-, value: Number
-});
-
-db.model('Answer', AnswerSchema);
-
-/**
- * Answer Response Schema
  *
  *    answer - selected answer
  *    correct - true | false
  *    person - who answered?
  */
 
-var ResponseSchema = new Schema({
+var AnswerSchema = new Schema({
   answer: ObjectId
 , correct: Boolean
 , person: ObjectId
 });
 
-db.model('Response', ResponseSchema);
+db.model('Answer', AnswerSchema);
 
