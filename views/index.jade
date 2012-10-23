@@ -5,3 +5,9 @@ block content
     .icon ?
     span= title
   p Welcome to #{title}
+
+  ul.quizzes
+    each quiz in quizzes
+      li
+        a(href= '/quiz/' + quiz._id)!= quiz.name + ' <i>(' + quiz.questions.length + ')</i>'
+
