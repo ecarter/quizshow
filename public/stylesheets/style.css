@@ -28,3 +28,20 @@ a {
   margin-right: 10px;
   font-size: 28px;
 }
+
+.quizzes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.quizzes, .questions {
+}
+
+.quizzes li, .questions li {
+  margin: 0;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.quizzes li a, .questions li a {
+}
