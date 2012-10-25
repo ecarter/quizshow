@@ -2,13 +2,47 @@ extends layout
 
 block content
 
-  h1= quiz.name
-  .body= quiz.body
+  div(class='details ' + quiz.status)
+    span.title= quiz.name
+    span.body= quiz.body
+    span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'on air' : 'playing soon'
 
-  h2 Questions <i>(#{ quiz.questions.length })</i>
-  ol.questions
-    each q in quiz.questions
-      li= '' + q.question
+  .controls
+    .control-group
+      .control-label Format
+      .controls
+        ul
+          li manual
+          li timed
+    .control-group
+      .control-label Status
+      .controls
+        ul
+          li on air
+          li off air
+          li coming soon
+          li closed
 
-  .people
-    h2 People
+  .current-question
+    h2.meta= quiz.name + ': ' + ' Question (1/' + quiz.questions.length + ')' + ' for 10 pts'
+    h1.title Current Question Title
+    ul.choices
+      li option 1
+      li option 2
+      li option 3
+      li option 4
+    ul.answers
+
+  .quiz-admin.clearfix
+    .main
+      h2 Questions <i>(#{ quiz.questions.length })</i>
+      ol.questions
+        each q in quiz.questions
+          li= '' + q.question
+
+    .related
+      .people
+        h2 Players
+
+      .people
+        h2 Audience

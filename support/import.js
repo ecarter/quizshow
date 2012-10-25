@@ -13,7 +13,8 @@ var fs = require('fs')
 var temp = {}
   , quizzes = []
   , Quiz = db.model('Quiz')
-  , Question = db.model('Question');
+  , Question = db.model('Question')
+  , min = 50; // minimum question count for import
 
 /**
  * Build Categories
@@ -45,7 +46,9 @@ for (var key in temp) {
   quiz.category = key;
   quiz.questions = category.questions;
   quizzes.push(quiz);
-  importQuiz(quiz);
+  if ( quiz.questions.length > min ) {
+    importQuiz(quiz);
+  }
 }
 
 /**

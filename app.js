@@ -29,8 +29,6 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){
@@ -38,11 +36,27 @@ app.configure('development', function(){
 });
 
 /**
+ * Global Locals
+ *
+ *   - app_title - config.title
+ */
+
+app.use( function (req, res, next) {
+  res.locals.app_title = config.title;
+  next();
+});
+
+/**
  * Routes
  */
 
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/join', user.join);
+app.post('/register', user.register);
 app.get('/quiz/:id', quiz.index);
 
 /**

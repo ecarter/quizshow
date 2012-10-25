@@ -11,6 +11,6 @@ var db = require('../app').db;
 exports.index = function(req, res){
   db.model('Quiz').find({}, function(err, quizzes){
     if (err) throw err;
-    res.render('index', { title: 'QuizShow', quizzes: quizzes });
+    res.render('index', { title: 'QuizShow', quizzes: quizzes, people: [] });
   });
 };

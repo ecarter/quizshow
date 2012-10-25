@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .register
+    h1 Join the Show!
+    form(action='/register', method='post')
+      .clearfix
+        div.field
+          label Name
+          input(type='text')
+        div.field
+          label Secret
+          input(type='password')
+        button(type='submit') Join
+      div.clearfix
+        h3 Select Character
+        ul.avatars
+          each avatar in avatars
+            li
+              label
+                img(src=avatar.url, alt=avatar.name)
+                input(type='radio', name='avatar', value=avatar.url)
+

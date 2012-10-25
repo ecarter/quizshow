@@ -1,13 +1,21 @@
 extends layout
 
 block content
-  h1#brand
-    .icon ?
-    span= title
-  p Welcome to #{title}
-
-  ul.quizzes
-    each quiz in quizzes
-      li
-        a(href= '/quiz/' + quiz._id)!= quiz.name + ' <i>(' + quiz.questions.length + ')</i>'
-
+  .home.clearfix
+    .main
+      h2 Quizzes
+      ul.quizzes
+        each quiz in quizzes
+          li
+            a(href= '/quiz/' + quiz._id, class=quiz.status)
+              span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'on air' : 'playing soon'
+              span.title= quiz.name
+              i.total= '(' + quiz.questions.length + ')'
+              i.format= quiz.format
+    .related
+      h2 Players
+      ul.people
+        each person in people
+          li
+            a(href= '/person/' + person._id)= person.name
+            .points= person.points + ' pts'
