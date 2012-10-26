@@ -1,17 +1,19 @@
 extends layout
 
 block content
-  .register
-    h1 Join the Show!
-    form(action='/register', method='post')
-      .clearfix
-        div.field
-          label Name
-          input(type='text')
-        div.field
-          label Secret
-          input(type='password')
-        button(type='submit') Join
+  h1 Join the Show!
+  form.form.register-form(action='/join', method='post')
+    if (typeof error !== 'undefined')
+      .error= error
+    .clearfix
+      div.field
+        label Name
+        input(type='text', name='name')
+      div.field
+        label Secret
+        input(type='password', name='secret')
+      button(type='submit') Join
+    //-
       div.clearfix
         h3 Select Character
         ul.avatars
