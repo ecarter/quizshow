@@ -25,6 +25,7 @@ var PersonSchema = new Schema({
 , secret: String
 , about: String
 , image: String
+, admin: Boolean
 });
 
 db.model('Person', PersonSchema);
@@ -43,6 +44,10 @@ var QuestionSchema = new Schema({
 , answer: String
 , choices: [ { text: String, order: Number } ]
 , value: Number
+});
+
+QuestionSchema.virtual('json').get(function(){
+  return JSON.stringify(this);
 });
 
 db.model('Question', QuestionSchema);
