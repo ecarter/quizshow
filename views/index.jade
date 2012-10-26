@@ -2,16 +2,17 @@ extends layout
 
 block content
   .home.clearfix
+
     .main
       h2 Quizzes
       ul.quizzes
         each quiz in quizzes
-          li
-            a(href= '/quiz/' + quiz._id, class=quiz.status)
-              span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'on air' : 'playing soon'
+          li(id='quiz-' + quiz.id, class=quiz.status)
+            a(href= '/quiz/' + quiz.id)
+              span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'now playing' : 'coming soon'
               span.title= quiz.name
               i.total= '(' + quiz.questions.length + ')'
-              i.format= quiz.format
+
     .related
       h2 Players
       ul.people
@@ -19,3 +20,34 @@ block content
           li
             a(href= '/person/' + person._id)= person.name
             .points= person.points + ' pts'
+
+block scripts
+
+  script(type='text/javascript')
+
+    var socket = io.connect();
+
+    socket.emit('lobby', {
+      user: { name: 'guest', image: '' }
+    , body: 'has entered the lobby.'
+    , type: 'join'
+    });
+
+    socket.on('status', function(data){
+      console.log('status', JSON.stringify(data));
+
+      if ( data.quiz ) {
+        var quiz = $('#quiz-' + data.quiz);
+
+        switch (data.type) {
+          case 'play':
+            quiz.attr('class', 'active');
+            quiz.find('.status').html('now playing');
+            break;
+          case 'pause':
+            quiz.attr('class', 'inactive');
+            quiz.find('.status').html('off air');
+            break;
+        }
+      }
+    });
