@@ -13,8 +13,11 @@
   "dependencies": {
     "express": "*",
     "jade": "*",
+    "stylus": "*",
+    "nib": "*",
     "socket.io": "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "session-mongoose": "*"
   },
   "devDependencies": {
     "mocha": "*",
