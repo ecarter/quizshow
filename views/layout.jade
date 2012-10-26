@@ -3,6 +3,8 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/javascripts/jquery.js')
+    script(src='/javascripts/socket.io.js')
   body
     .wrap
       .container
@@ -12,6 +14,31 @@ html
               .icon ?
               span= app_title
           .nav
-            a.join(href='/join') join in
+            - if (typeof currentUser !== 'undefined')
+              a.exit(href='/logout') exit
+            - else
+              a.join(href='/join') join
+              a.login(href='/login') login
         .content
           block content
+
+    script(src='/javascripts/main.js')
+
+    script#message-template(type='text/x-template')
+      li.message
+        img.avatar(src='')
+        b.name
+        | 
+        i.body
+
+    script(type='text/javascript')
+      function message (data) {
+        var message = $( $('#message-template').html().toString() );
+        message.find('.name').text( data.user.name );
+        message.find('.image').attr('src', data.user.image );
+        message.find('.body').html( data.body_html || data.body );
+        $('.messages').append( message );
+      }
+
+    block scripts
+
