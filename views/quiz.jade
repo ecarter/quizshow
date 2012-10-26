@@ -2,47 +2,152 @@ extends layout
 
 block content
 
-  div(class='details ' + quiz.status)
-    span.title= quiz.name
-    span.body= quiz.body
-    span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'on air' : 'playing soon'
+  .quiz
 
-  .controls
-    .control-group
-      .control-label Format
-      .controls
-        ul
-          li manual
-          li timed
-    .control-group
-      .control-label Status
-      .controls
-        ul
-          li on air
-          li off air
-          li coming soon
-          li closed
+    div(id='quiz-' + quiz.id, class='details ' + quiz.status)
+      span.title= quiz.name
+      span.body= quiz.body
+      span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'now playing' : 'coming soon'
+      - if (currentUser.admin || quiz.owner === currentUser._id)
+        a.play(href='javascript:;') start quiz
+        a.pause(href='javascript:;') pause
 
-  .current-question
-    h2.meta= quiz.name + ': ' + ' Question (1/' + quiz.questions.length + ')' + ' for 10 pts'
-    h1.title Current Question Title
-    ul.choices
-      li option 1
-      li option 2
-      li option 3
-      li option 4
-    ul.answers
 
-  .quiz-admin.clearfix
-    .main
-      h2 Questions <i>(#{ quiz.questions.length })</i>
-      ol.questions
-        each q in quiz.questions
-          li= '' + q.question
+    .off-air
+      h2 We'll return shortly...
 
-    .related
-      .people
-        h2 Players
+    .current-question
+      .progress
+        span.current
+        span.points
+      h1.title take your seat, the show starts soon
 
-      .people
-        h2 Audience
+    .log
+      h2 Show Log
+      ul.messages
+
+    .players
+      h2 Players
+      ul.people
+
+    - if (currentUser.admin || quiz.owner === currentUser._id)
+      .quiz-admin.clearfix
+        h1 Quiz Admin
+        ol.questions
+          each q in quiz.questions
+            li.question(data-json=q.json)= '' + q.question
+
+block scripts
+
+  script(type='text/javascript')
+
+    var socket = io.connect()
+      , user = { name: "#{ currentUser.name }", image: "#{ currentUser.image }" }
+      , total = #{quiz.questions.length};
+
+    socket.emit('subscribe', {
+      user: user
+    , body: 'has join the quiz.'
+    , quiz: "#{ quiz.id }"
+    , type: 'join'
+    });
+
+    socket.on('message', function(data){
+      message(data);
+    });
+
+    socket.on('question', function(data){
+      question(data);
+      data.body = 'asked the question: "' + data.question.question + '"';
+      message(data);
+    });
+
+    socket.on('players', function(data){
+      console.log('players', JSON.stringify(data));
+    });
+
+    socket.on('reconnect', function(){
+      message({
+        user: { name: 'System' }
+      , body: 'Reconnected to the server'
+      , type: 'success'
+      });
+    });
+
+    socket.on('reconnecting', function(){
+      message({
+        user: { name: 'System' }
+      , body: 'Attempting to re-connect to the server'
+      , type: 'info'
+      });
+    });
+
+    socket.on('error', function(e){
+      message({
+        user: { name: 'System' }
+      , body: e ? e : 'A unknown error occurred'
+      , type: 'error'
+      });
+    });
+
+    socket.on('play', function(){
+      $('.quiz').addClass('playing');
+    });
+
+    socket.on('pause', function(){
+      $('.quiz').removeClass('playing');
+    });
+
+    function question (data) {
+      //-console.log('question', JSON.stringify(data));
+      $('.quiz').addClass('playing');
+      $('.current-question .current').html( data.current + ' / ' + total);
+      $('.current-question .title').html( data.question.question);
+
+      if ( data.question.value ) {
+        $('.current-question .points').html( data.question.value + ' pts').show();
+      } else {
+        $('.current-question .points').hide();
+      }
+    }
+
+    $('.play').on('click', function(e){
+      socket.emit('play', {
+        quiz: "#{quiz.id}"
+      , user: user
+      , body: 'set quiz to "now playing"'
+      , type: 'play'
+      });
+    });
+
+    $('.pause').on('click', function(e){
+      socket.emit('pause', {
+        quiz: "#{quiz.id}"
+      , user: user
+      , body: 'paused the quiz'
+      , type: 'pause'
+      });
+    });
+
+    $('.current-question .choice').on('click', function(e){
+      e.preventDefault();
+      $.ajax({
+          url: '/messages.json'
+        , type: 'POST'
+        , data: {}
+        , dataType: 'json'
+      })
+      .success( function (data) {
+      });
+    });
+
+    $('.quiz-admin .question').on('click', function(e){
+      var question = $(this).data('json');
+      $(this).addClass('asked');
+      socket.emit('question', {
+        quiz: "#{quiz.id}"
+      , question: question
+      , current: total - $('.quiz-admin .question').not('.asked').length
+      , user: user
+      });
+    });
