@@ -7,9 +7,9 @@ block content
       h2 Quizzes
       ul.quizzes
         each quiz in quizzes
-          li(id='quiz-' + quiz.id, class=quiz.status)
+          li(id='quiz-' + quiz.id)
             a(href= '/quiz/' + quiz.id)
-              span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'now playing' : 'coming soon'
+              span(class='status ' + quiz.status)= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'now playing' : 'coming soon'
               span.title= quiz.name
               i.total= '(' + quiz.questions.length + ')'
 
@@ -42,11 +42,11 @@ block scripts
         switch (data.type) {
           case 'play':
             quiz.attr('class', 'active');
-            quiz.find('.status').html('now playing');
+            quiz.find('.status').attr('class', 'status active').html('now playing');
             break;
           case 'pause':
             quiz.attr('class', 'inactive');
-            quiz.find('.status').html('off air');
+            quiz.find('.status').attr('class', 'status inactive').html('off air');
             break;
         }
       }
