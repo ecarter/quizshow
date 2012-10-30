@@ -85,9 +85,8 @@ app.all('*', user.session);
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/join', user.join);
-app.post('/join', user.register);
-app.get('/login', user.login);
-app.post('/login', user.authLogin);
+app.post('/register', user.register);
+app.post('/login', user.login);
 app.get('/logout', user.logout);
 app.get('/quiz/:id', user.auth, quiz.index);
 

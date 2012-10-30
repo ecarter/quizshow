@@ -4,7 +4,7 @@
 
 var app = require('../app')
   , db = app.db
-  //, avatars = require('../support/avatars')
+  , avatars = require('../support/avatars')
   , User = db.model('Person');
 
 /**
@@ -13,8 +13,8 @@ var app = require('../app')
 
 exports.join = function(req, res){
   res.render('register', {
-    title: 'Join'
-  //, avatars: avatars
+    title: 'Login / Register'
+  , avatars: avatars
   });
 };
 
@@ -33,10 +33,10 @@ exports.register = function(req, res){
   // Save user
   user.save( function (err) {
     if (err) {
-      res.locals.error = err;
+      res.locals.register_error = err;
       return res.render('register', {
-        title: 'Error - Join'
-      //, avatars: avatars
+        title: 'Error - Register'
+      , avatars: avatars
       });
     }
     // Login user in
@@ -45,19 +45,12 @@ exports.register = function(req, res){
   });
 };
 
-/**
- * Renders login view
- */
-
-exports.login = function(req, res){
-  res.render('login', { title: 'Login' });
-};
 
 /**
  * Authenticates user
  */
 
-exports.authLogin = function(req, res) {
+exports.login = function(req, res) {
   var query = { name: req.body.name, secret: req.body.secret };
 
   User.findOne(query, function (err, user) {
@@ -66,8 +59,8 @@ exports.authLogin = function(req, res) {
       res.redirect('/');
     }
     res.locals.title = 'Error - Login';
-    res.locals.error = 'Incorrect name or secret';
-    res.render('login');
+    res.locals.login_error = 'Incorrect name or secret';
+    res.render('register');
   });
 
 };
@@ -110,7 +103,7 @@ exports.auth = function (req, res, next) {
   var query = { _id: req.session.user_id };
 
   // Check session
-  if ( !req.session.user_id ) return res.redirect('/login');
+  if ( !req.session.user_id ) return res.redirect('/join');
 
   // Find user
   User.findOne(query, function (err, user) {

@@ -1,19 +1,41 @@
 extends layout
 
 block content
-  h1 Join the Show!
-  form.form.register-form(action='/join', method='post')
-    if (typeof error !== 'undefined')
-      .error= error
-    .clearfix
-      div.field
-        label Name
-        input(type='text', name='name')
-      div.field
-        label Secret
-        input(type='password', name='secret')
-      button(type='submit') Join
-    //-
+
+  .login
+    h1 Login back into the show
+
+    form.form.login-form(action='/login', method='post')
+      if (typeof login_error !== 'undefined')
+        .error= login_error
+      .clearfix
+        div.field-group
+          label Your Username
+          input(type='text', name='name')
+        div.field-group
+          label Secret Question
+          input(type='password', name='secret')
+        button(type='submit') Login
+    
+  .register
+    h1 Join the Show!
+
+    form.form.register-form(action='/register', method='post')
+      if (typeof register_error !== 'undefined')
+        .error= register_error
+      .clearfix
+        div.field-group
+          label Select Username
+          .field
+            input(type='text', name='name')
+            span.help Username can be anything
+        div.field-group
+          label Secret
+          .field
+            input(type='password', name='secret')
+            span.help Tell us a secret, we'll use this to know it's you!
+        button(type='submit') Join
+
       div.clearfix
         h3 Select Character
         ul.avatars
