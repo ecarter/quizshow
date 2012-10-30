@@ -83,16 +83,6 @@ header
   background green
   border-radius 5px
 
-.login
-  margin-left 10px
-  padding 10px 20px
-  font-size 14px
-  font-weight bold
-  text-decoration none
-  background white
-  color black
-  border-radius 5px
-
 .exit
   padding 10px 20px
   font-size 14px
@@ -157,29 +147,13 @@ header
   color white
   font-style italic
 
-.active
-  .status
+  &.active
     background darkgreen
     font-style normal
 
-.inactive
-  .status
+  &.inactive
     background #555
     font-style normal
-
-.details
-  margin-bottom 30px
-
-  .title
-    font-size 16px
-    margin-right 10px
-
-  .play
-  .pause
-    float right
-
-  .pause
-    display none
 
 .off-air
   height 300px
@@ -207,7 +181,7 @@ header
   text-align center
   border-radius 5px
   position relative
-  display none
+  display block
   overflow hidden
 
   .progress
@@ -225,7 +199,7 @@ header
     top 10px
 
   .title
-    padding-top 80px
+    padding-top 100px
     margin 0 100px 30px
 
   .choices
@@ -243,15 +217,52 @@ header
 
 .quiz
 
+  .details
+    margin-bottom 30px
+
+
+    .inactive
+      opacity 1
+
+    .active
+      opacity 0.4
+
+    .title
+      font-size 16px
+      margin-right 10px
+
+    .status
+      margin-right 10px
+
+  .off-air
+    display none
+
   &.playing
+
     .off-air
       display none
+
     .current-question
       display block
-    .play
-      display none
-    .pause
+
+    .details
+      .inactive
+        opacity 0.4
+      .active
+        opacity 1
+
+  &.paused
+
+    .off-air
       display block
+
+    .current-question
+      display none
+
+  &.admin
+    .inactive
+    .active
+      cursor pointer
 
 .avatars
   display block
@@ -279,25 +290,37 @@ header
         transform scale(3)
 
 .form
-  width 500px
-  margin 0 auto
+  width 100%
+  margin 0
 
-  .field
+  .field-group
+    clearfix()
     display block
     margin-bottom 20px
 
     label
-      width 100px
+      width 20%
       font-size 18px
       display inline-block
-      margin-right 20px
+      margin-right 5%
       text-align right
+      float left
 
-    input
-      width 310px
-      font-size 18px
-      border none
-      padding 10px
+    .field
+      width 65%
+      display inline-block
+      float left
+
+      input
+        width 100%
+        font-size 18px
+        border none
+        padding 10px
+
+      .help
+        font-size 12px
+        font-style italic
+        margin-top 5px
 
   button[type='submit']
     float left
@@ -308,7 +331,7 @@ header
     color white
     border none
     border-radius 5px
-    margin-left 120px
+    margin-left 25%
 
 .error
   margin-bottom 20px
