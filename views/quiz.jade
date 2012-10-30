@@ -1,17 +1,16 @@
 extends layout
 
+
 block content
+  - var admin = currentUser.admin || quiz.owner === currentUser.id
 
   .quiz
 
-    div(id='quiz-' + quiz.id, class='details ' + quiz.status)
+    div(id='quiz-' + quiz.id, class='details ' + quiz.status + (admin ? 'admin' : '') )
       span.title= quiz.name
       span.body= quiz.body
-      span.status= quiz.status === 'inactive' ? 'off air' : quiz.status === 'active' ? 'now playing' : 'coming soon'
-      - if (currentUser.admin || quiz.owner === currentUser._id)
-        a.play(href='javascript:;') start quiz
-        a.pause(href='javascript:;') pause
-
+      span.status.inactive.pause off air
+      span.status.active.play now playing
 
     .off-air
       h2 We'll return shortly...
@@ -20,7 +19,14 @@ block content
       .progress
         span.current
         span.points
-      h1.title take your seat, the show starts soon
+      h1.title please take your seat<br><small>the show begins soon!</small>
+
+    - if (currentUser.admin || quiz.owner === currentUser._id)
+      .quiz-admin.clearfix
+        h2 Quiz Admin
+        ol.questions
+          each q in quiz.questions
+            li.question(data-json=q.json)!= '' + q.question + ' <b>' + q.answer + '</b>'
 
     .log
       h2 Show Log
@@ -30,18 +36,11 @@ block content
       h2 Players
       ul.people
 
-    - if (currentUser.admin || quiz.owner === currentUser._id)
-      .quiz-admin.clearfix
-        h1 Quiz Admin
-        ol.questions
-          each q in quiz.questions
-            li.question(data-json=q.json)= '' + q.question
-
 block scripts
 
   script(type='text/javascript')
 
-    var socket = io.connect()
+    var socket = window.socket = io.connect()
       , user = { name: "#{ currentUser.name }", image: "#{ currentUser.image }" }
       , total = #{quiz.questions.length};
 
@@ -91,11 +90,11 @@ block scripts
     });
 
     socket.on('play', function(){
-      $('.quiz').addClass('playing');
+      $('.quiz').addClass('playing').removeClass('paused');
     });
 
     socket.on('pause', function(){
-      $('.quiz').removeClass('playing');
+      $('.quiz').removeClass('playing').addClass('paused');
     });
 
     function question (data) {
@@ -111,24 +110,6 @@ block scripts
       }
     }
 
-    $('.play').on('click', function(e){
-      socket.emit('play', {
-        quiz: "#{quiz.id}"
-      , user: user
-      , body: 'set quiz to "now playing"'
-      , type: 'play'
-      });
-    });
-
-    $('.pause').on('click', function(e){
-      socket.emit('pause', {
-        quiz: "#{quiz.id}"
-      , user: user
-      , body: 'paused the quiz'
-      , type: 'pause'
-      });
-    });
-
     $('.current-question .choice').on('click', function(e){
       e.preventDefault();
       $.ajax({
@@ -141,13 +122,37 @@ block scripts
       });
     });
 
-    $('.quiz-admin .question').on('click', function(e){
-      var question = $(this).data('json');
-      $(this).addClass('asked');
-      socket.emit('question', {
-        quiz: "#{quiz.id}"
-      , question: question
-      , current: total - $('.quiz-admin .question').not('.asked').length
-      , user: user
+  //- Admin
+
+  - if (admin)
+
+    script(type='text/javascript')
+
+      $('.play').on('click', function(e){
+        socket.emit('play', {
+          quiz: "#{quiz.id}"
+        , user: user
+        , body: 'set quiz to "now playing"'
+        , type: 'play'
+        });
       });
-    });
+
+      $('.pause').on('click', function(e){
+        socket.emit('pause', {
+          quiz: "#{quiz.id}"
+        , user: user
+        , body: 'paused the quiz'
+        , type: 'pause'
+        });
+      });
+
+      $('.quiz-admin .question').on('click', function(e){
+        var question = $(this).data('json');
+        $(this).addClass('asked');
+        socket.emit('question', {
+          quiz: "#{quiz.id}"
+        , question: question
+        , current: total - $('.quiz-admin .question').not('.asked').length
+        , user: user
+        });
+      });
