@@ -9,7 +9,7 @@ a group of users on mutliple connections and devices in realtime.
 
 **Created for fun and meant to be fun.**
 
-_Quizshow in its current form a barely alpha prototype._
+_Quizshow in its current form is a barely alpha prototype._
 
 ## Requires
 
