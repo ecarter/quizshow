@@ -4,7 +4,6 @@
 
 var app = require('../app')
   , db = app.db
-  , avatars = require('../support/avatars')
   , User = db.model('Person');
 
 /**
@@ -14,7 +13,6 @@ var app = require('../app')
 exports.join = function(req, res){
   res.render('register', {
     title: 'Login / Register'
-  , avatars: avatars
   });
 };
 
@@ -36,7 +34,6 @@ exports.register = function(req, res){
       res.locals.register_error = err;
       return res.render('register', {
         title: 'Error - Register'
-      , avatars: avatars
       });
     }
     // Login user in
