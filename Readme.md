@@ -2,7 +2,7 @@
 
 a collaborative realtime quiz show
 
-![screenshot](http://github.com/ecarter/quizshow/blob/master/screenshot.png)
+![screenshot](http://raw.github.com/ecarter/quizshow/blob/master/screenshot.png)
 
 A app created to present game show style trivia and questions among 
 a group of users on mutliple connections and devices in realtime.
