@@ -1,54 +1,148 @@
+#!/usr/bin/env node
+
 /**
  * Module Dependecies
  */
 
 var fs = require('fs')
   , path = require('path')
-  , config = require('../config')
+  , program = require('commander')
+  , pkg = require('../package')
   , mongoose = require('mongoose')
-  , db = mongoose.createConnection(config.MONGO_HOST, config.MONGO_DB)
+  , db = mongoose.createConnection()
   , models = require('../models')
-  , questions = require('./questions');
-
-var temp = {}
-  , quizzes = []
   , Quiz = db.model('Quiz')
-  , Question = db.model('Question')
-  , min = 50; // minimum question count for import
+  , Question = db.model('Question');
 
-/**
- * Build Categories
- */
+var db_name
+  , config
+  , host;
 
-questions.forEach(function(question){
-  var category = question.category;
-
-  if ( !temp[category] ) {
-    temp[category] = {};
-  }
-
-  delete question.category;
-  if ( !temp[category].questions ) {
-    temp[category].questions = [];
-  }
-
-  temp[category].questions.push(question);
+db.on('error', function(err){
+  console.log(err);
+  console.log('could not connect: is mongo running?');
+  process.exit();
 });
 
+program
+  .version(pkg.version)
+  .option('-i, --import <file>', 'import quiz data')
+  .option('-c, --config <config>', 'use config file')
+  .option('--host <localhost>', 'mongodb host')
+  .option('--db <quizshow>', 'mongo database')
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ quiz --import examples/trivia.txt');
+  console.log('    $ quiz -i examples/questions.json');
+  console.log('    $ quiz -i examples/questions.json -c config.js');
+  console.log('');
+});
+
+program.parse(process.argv);
+
+if ( program.config ) {
+  config = require(program.config);
+} else {
+  config = require('../config');
+}
+
+host = program.host || config.MONGO_HOST;
+db_name = program.db || config.MONGO_DB;
+
+db.open(host, db_name);
+
+if ( program.import ) {
+  console.log(program.import);
+  switch ( path.extname(program.import) ) {
+    case '.txt':
+      parseText(fs.readFileSync(program.import), importQuiz);
+      break;
+    case '.json':
+      parseJSON(require(program.import), importQuiz);
+      break;
+    default:
+      console.log('cannot import:', program.import, 'file');
+  }
+}
+
 /**
- * Build Import
+ * Parse question JSON file
  */
 
-for (var key in temp) {
-  var category = temp[key]
-    , quiz = {};
+function parseJSON (questions, next) {
 
-  quiz.category = key;
-  quiz.questions = category.questions;
-  quizzes.push(quiz);
-  if ( quiz.questions.length > min ) {
-    importQuiz(quiz);
+  var temp = {}
+    , quizzes = []
+    , min = 50; // minimum question count for import
+
+  questions.forEach(function(question){
+    var category = question.category;
+
+    if ( !temp[category] ) {
+      temp[category] = {};
+    }
+
+    delete question.category;
+    if ( !temp[category].questions ) {
+      temp[category].questions = [];
+    }
+
+    temp[category].questions.push(question);
+  });
+
+  // Build Import
+
+  for (var key in temp) {
+    var category = temp[key]
+      , quiz = {};
+
+    quiz.category = key;
+    quiz.questions = category.questions;
+    quizzes.push(quiz);
+    if ( quiz.questions.length > min ) {
+      next(quiz);
+    }
   }
+
+}
+
+/**
+ * Parse question text file
+ */
+
+function parseText (data, next) {
+
+  var temp = {}
+    , content = data.toString()
+    , lines = content.split(/\n/g)
+    , questions = []
+    , quiz = { questions: [] }
+    , q;
+
+  lines.forEach(function(line){
+    if ( line !== '' ) {
+
+      console.log('line', line);
+
+      if ( /^Q:/.test(line) ) {
+        q = line.split(/Q: /)[1];
+        temp[q] = '';
+      }
+
+      if ( /^A:/.test(line) ) {
+        temp[q] = line.split(/A: /)[1];
+      }
+
+    }
+  });
+
+  for (var q in temp) {
+    quiz.questions.push({ question: q, answer: temp[q] });
+  }
+
+  next(quiz);
 }
 
 /**
@@ -58,8 +152,8 @@ for (var key in temp) {
  */
 
 function importQuiz (data) {
-  var quiz = new Quiz({ name: key, format: 'manual' })
-    , total = category.questions.length
+  var quiz = new Quiz({ name: data.name, format: 'manual' })
+    , total = data.questions.length
     , count = 0;
 
   function next() {
@@ -84,6 +178,3 @@ function importQuiz (data) {
 
 }
 
-//console.log('quizzes',quizzes);
-
-//process.exit();

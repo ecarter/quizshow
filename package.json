@@ -6,11 +6,15 @@
     "type": "git",
     "url": "https://github.com/ecarter/quizshow.git"
   },
+  "bin": {
+    "quizshow": "./bin/quizshow"
+  },
   "scripts": {
     "start": "node app",
     "test": "mocha"
   },
   "dependencies": {
+    "commander": "*",
     "express": "*",
     "jade": "*",
     "stylus": "*",
