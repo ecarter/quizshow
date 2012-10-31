@@ -36,12 +36,3 @@ block content
             span.help Tell us a secret, we'll use this to know it's you!
         button(type='submit') Join
 
-      div.clearfix
-        h3 Select Character
-        ul.avatars
-          each avatar in avatars
-            li
-              label
-                img(src=avatar.url, alt=avatar.name)
-                input(type='radio', name='avatar', value=avatar.url)
-
