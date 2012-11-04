@@ -33,22 +33,25 @@ _Quizshow in its current form is a barely alpha prototype._
 
 ## Examples
 
-Import triva example:
+First, load the example data into mongo with `quizshow(1)` cli tool.
+
+__Import triva example:__
 
     $ quizshow --import examples/trivia.txt
 
-Import questions example:
+__Import questions example:__
 
     $ quizshow --import examples/questions.json
 
-Start the show!
+_Questions from [MoxQuizz]() via [QuizParser](https://github.com/danielmahon/QuizParser)_
+
+__Start the show!__
 
     $ npm start
-    $ open http://localhost:3000
 
-## Usage
+Open the app in your browser [localhost:3000](http://localhost:3000)
 
-### quizshow(1)
+## Usage `quizshow(1)`
 
     $ quizshow -h
 
@@ -67,8 +70,6 @@ Start the show!
 
         $ quizshow -i examples/questions.json
         $ quizshow -i examples/questions.json -c config.js
-
-
 
 ## License
 
